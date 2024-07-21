@@ -1,0 +1,12 @@
+Skin Cancer Prediction Using Deep Learning.
+
+Algorithm / Model Used: CNN Architecture.
+
+Training Accuracy:96.00%.
+Validation Accuracy: 97.00%.
+
+
+
+
+
+

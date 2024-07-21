@@ -1,0 +1,3 @@
+Dataset download link (Size: 2.61 GB):
+
+https://www.kaggle.com/datasets/jayaprakashpondy/skin-cancer-dataset
