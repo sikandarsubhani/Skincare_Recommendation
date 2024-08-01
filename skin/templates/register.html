@@ -46,12 +46,12 @@
   <header id="header" class="d-flex align-items-center">
     <div class="container d-flex justify-content-between">
       <div class="logo">
-        <h1 class="text-light"><a href="{{ url_for('index')}}">Skin Care Recommendation</a></h1>
+        <h1 class="text-light"><a href="{{ url_for('main_bp.index')}}">Skin Care Recommendation</a></h1>
       </div>
       <nav id="navbar" class="navbar">
         <ul>
-          <li><a class="nav-link scrollto active" href="{{ url_for('first')}}">Home</a></li>
-          <li><a class="nav-link scrollto" href="{{ url_for('login')}}">Login</a></li>
+          <li><a class="nav-link scrollto active" href="{{ url_for('main_bp.first')}}">Home</a></li>
+          <li><a class="nav-link scrollto" href="{{ url_for('main_bp.login')}}">Login</a></li>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav><!-- .navbar -->
@@ -95,7 +95,7 @@
               <br>
               <div class="checkbox mb-3">
                 <h6 style="color: black;">Already have an account?</h6>
-                <a class="btn btn-sm btn-secondary" href="{{ url_for('login') }}">Login</a>
+                <a class="btn btn-sm btn-secondary" href="{{ url_for('main_bp.login') }}">Login</a>
               </div>
               {{ form.submit(class="btn btn-lg btn-block btn-primary") }}
             </form>

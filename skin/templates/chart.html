@@ -53,12 +53,12 @@
 
       <nav id="navbar" class="navbar">
         <ul>
-          <li><a class="nav-link scrollto" href="{{ url_for('first')}}">Home</a></li>
-          <li><a class="nav-link scrollto" href="{{ url_for('login')}}">Login</a></li>
-          <li><a class="nav-link scrollto" href="{{ url_for('index')}}">Preview</a></li>
-          <li><a class="nav-link scrollto" href="{{ url_for('Graph')}}">Graph</a></li>
-          <li><a class="nav-link scrollto" href="{{ url_for('chart')}}">chart</a></li>
-          <li><a class="nav-link scrollto active" href="{{ url_for('first')}}">Logout</a></li>
+          <li><a class="nav-link scrollto" href="{{ url_for('main_bp.first')}}">Home</a></li>
+          <li><a class="nav-link scrollto" href="{{ url_for('main_bp.main_bp.login')}}">Login</a></li>
+          <li><a class="nav-link scrollto" href="{{ url_for('main_bp.main_bp.index')}}">Preview</a></li>
+          <li><a class="nav-link scrollto" href="{{ url_for('main_bp.main_bp.Graph')}}">Graph</a></li>
+          <li><a class="nav-link scrollto" href="{{ url_for('main_bp.main_bp.chart')}}">chart</a></li>
+          <li><a class="nav-link scrollto active" href="{{ url_for('main_bp.main_bp.first')}}">Logout</a></li>
          
         
         </ul>
