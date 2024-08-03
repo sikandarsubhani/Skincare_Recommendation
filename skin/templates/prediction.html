@@ -31,13 +31,9 @@
                 <br>
                   <center><h2 style="color:red"> Prediction is : <i> {{prediction}} </i></h2></center>
                   <center><h2 style="color:red"> Recommendation : <i> {{recommendation_result}} </i></h2></center>
-                  <center><h2 style="color:red"> Here is the related article : <i> <a href="{{show_link}}">Click Here</a> </i></h2></center>
-                  <center><h2 style="color:red"> Recommended Products : </h2>
-                    <ul>
-                      {% for product in show_prod %}
-                          <li>{{ product }}</li>
-                      {% endfor %}
-                  </ul></center>
+                  <center><h2 style="color:red"> Here is the related article : <i> <a href="{{article_link}}">Read More </a> </i></h2></center>
+                  <center><h2 style="color:red"> Recommended Products :  {{products}}</h2>
+                  </center>
                   <br>
                   <center><h2 style="color:red; font-size: 1rem"  > Note: The model is currently in a learning state and its results may still be improving. As such, the results may be inaccurate. Please contact Your Dermatologist for confirmation and further advice before applying any product. <i> </i></h2></center>
                   {% endif %}

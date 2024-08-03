@@ -44,6 +44,67 @@ verbose_name = {
     14: 'STDs - Herpes/AIDS'
 }
 
+def get_recommendation(predict_result):
+    recommendation_is = "Cannot recommend"
+    related_article = "#"
+    recommended_products = ""
+
+    if "Basal cell" in predict_result:
+        recommendation_is = "Electrodesiccation and curettage (EDC)"
+        related_article = "https://www.aad.org/public/diseases/skin-cancer/types/basal-cell-carcinoma"
+        recommended_products = "EDC kits"
+    elif "Actinic" in predict_result:
+        recommendation_is = "Liquid Nitrogen Cryosurgery"
+        related_article = "https://www.aad.org/public/diseases/skin-cancer/types/actinic-keratosis"
+        recommended_products = "Cryosurgery equipment"
+    elif "keratosis" in predict_result:
+        recommendation_is = "Phototherapy"
+        related_article = "https://www.mayoclinic.org/diseases-conditions/actinic-keratosis/diagnosis-treatment/drc-20379564"
+        recommended_products = "Phototherapy devices"
+    elif "Dermatofibroma" in predict_result:
+        recommendation_is = "Surgical shaving of top"
+        related_article = "https://www.mayoclinic.org/diseases-conditions/dermatofibroma/diagnosis-treatment/drc-20355824"
+        recommended_products = "Surgical tools"
+    elif "nevi" in predict_result:
+        recommendation_is = "Surgical removal for cosmetic consideration"
+        related_article = "https://www.aad.org/public/diseases/skin-cancer/types/melanocytic-nevi"
+        recommended_products = "Surgical removal products"
+    elif "Melanoma" in predict_result:
+        recommendation_is = "Surgery"
+        related_article = "https://www.cancer.org/cancer/melanoma-skin-cancer/treating/surgery.html"
+        recommended_products = "Surgical kits"
+    elif "hemorrhage" in predict_result:
+        recommendation_is = "Electrocautery"
+        related_article = "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2797321/"
+        recommended_products = "Electrocautery equipment"
+    elif "pyogenic granulomas" in predict_result:
+        recommendation_is = "Laser therapy"
+        related_article = "https://www.aad.org/public/diseases/a-z/pyogenic-granuloma"
+        recommended_products = "Laser therapy devices"
+    elif "acne" in predict_result:
+        recommendation_is = "Topical treatments"
+        related_article = "https://www.aad.org/public/diseases/acne"
+        recommended_products = "Topical acne treatments"
+    elif "Vascular Tumor" in predict_result:
+        recommendation_is = "Surgical removal"
+        related_article = "https://www.aad.org/public/diseases/skin-cancer/types/vascular-tumor"
+        recommended_products = "Surgical removal tools"
+    elif "Vasculitis" in predict_result:
+        recommendation_is = "Corticosteroids"
+        related_article = "https://www.mayoclinic.org/diseases-conditions/vasculitis/diagnosis-treatment/drc-20350873"
+        recommended_products = "Corticosteroids"
+    elif "Pigmentation Disorder" in predict_result:
+        recommendation_is = "Topical treatments"
+        related_article = "https://www.aad.org/public/diseases/a-z/hyperpigmentation"
+        recommended_products = "Topical treatments"
+    elif "STDs" in predict_result:
+        recommendation_is = "Antiviral medication"
+        related_article = "https://www.cdc.gov/std/treatment/default.htm"
+        recommended_products = "Antiviral medications"
+
+    return recommendation_is, related_article, recommended_products
+
+
 model = load_model('skin/model/dermnet_m2.h5', custom_objects=dependencies)
 
 def predict_label(img_path):
@@ -123,36 +184,15 @@ def submit():
         db.session.commit()
 
         predict_result = predict_label(img_path)
-        recommendation_is = "Cannot recommend"
+    
+        recommendation_is, related_article, recommended_products = get_recommendation(predict_result)
 
-        if "Basal cell" in predict_result:
-            recommendation_is = "Electrodesiccation and curettage (EDC)"
-        elif "Actinic" in predict_result:
-            recommendation_is = "Liquid Nitrogen Cryosurgery"
-        elif "keratosis" in predict_result:
-            recommendation_is = "Phototherapy"
-        elif "Dermatofibroma" in predict_result:
-            recommendation_is = "Surgical shaving of top"
-        elif "nevi" in predict_result:
-            recommendation_is = "Surgical removal for cosmetic consideration"
-        elif "Melanoma" in predict_result:
-            recommendation_is = "Surgery"
-        elif "hemorrhage" in predict_result:
-            recommendation_is = "Electrocautery"
-        elif "pyogenic granulomas" in predict_result:
-            recommendation_is = "Laser therapy"
-        elif "acne" in predict_result:
-            recommendation_is = "Topical treatments"
-        elif "Vascular Tumor" in predict_result:
-            recommendation_is = "Surgical removal"
-        elif "Vasculitis" in predict_result:
-            recommendation_is = "Corticosteroids"
-        elif "Pigmentation Disorder" in predict_result:
-            recommendation_is = "Topical treatments"
-        elif "STDs" in predict_result:
-            recommendation_is = "Antiviral medication"
-
-        return render_template('prediction.html', prediction=predict_result, img_path=img_path, recommendation_result=recommendation_is)
+        return render_template('prediction.html', 
+                            prediction=predict_result, 
+                            img_path=img_path, 
+                            recommendation_result=recommendation_is,
+                            article_link=related_article,
+                            products=recommended_products)
 
     return redirect(url_for('main_bp.dashboard'))
 

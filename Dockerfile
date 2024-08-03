@@ -1,22 +1,21 @@
-# Use the official Python image from the Docker Hub
-FROM python:3.11-slim
+# Use an official Python runtime as a parent image
+FROM python:3.10-slim
 
 # Set the working directory in the container
 WORKDIR /app
 
+# Copy the current directory contents into the container at /app
 COPY . /app
 
-# Copy the requirements file into the container
-# COPY req.txt .
+# Install any needed packages specified in requirements.txt
+RUN pip --default-timeout=2000 install --no-cache-dir -r req.txt
 
-# Install the required Python packages
-RUN pip install -r req.txt
-
-# Copy the entire application into the container
-COPY . /app
-
-# Expose port 5000 for the Flask application
+# Make port 5000 available to the world outside this container
 EXPOSE 5000
 
-# Command to run the Flask application
-CMD ["python", "run.py"]
+# Define environment variable
+ENV FLASK_APP=run.py
+ENV FLASK_ENV=development
+
+# Run the Flask app when the container launches
+CMD ["flask", "run", "--host=0.0.0.0"]
