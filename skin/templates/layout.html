@@ -26,6 +26,19 @@
 <body>
     {% include 'includes/_navbar.html' %}
     <main id="main">
+      <center>
+      {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+        <div class="alert-container" style="width: 75%; height: auto;">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" style="font-size: 1.2em; width: 75%; height: auto;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}</center>
+
         {% block content %}
         {% endblock %} 
     </main>

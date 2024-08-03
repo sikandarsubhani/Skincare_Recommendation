@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from . import db, bcrypt
 from .forms import RegisterForm, LoginForm,UpdateProfileForm
-from .models import User,Picture
+from .models import User,Picture,VisitLog
 from flask_login import login_user, logout_user, login_required, current_user,login_manager
 import tensorflow as tf
 from tensorflow.keras.models import load_model
@@ -10,9 +10,16 @@ from tensorflow.keras.metrics import AUC
 import numpy as np
 import os
 from werkzeug.utils import secure_filename  # Correct import
+from datetime import datetime
 
 main_bp = Blueprint('main_bp', __name__)
 
+@main_bp.before_request
+def log_user_visit():
+    if current_user.is_authenticated:
+        visit = VisitLog(user_id=current_user.id, visit_time=datetime.utcnow())
+        db.session.add(visit)
+        db.session.commit()
 
 UPLOAD_FOLDER = 'skin/static/uploads/'
 if not os.path.exists(UPLOAD_FOLDER):

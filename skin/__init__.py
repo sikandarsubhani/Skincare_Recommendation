@@ -30,6 +30,9 @@ def create_app():
     with app.app_context():
         from .routes import main_bp
         app.register_blueprint(main_bp)
+
+        from .admin_routes import admin_bp
+        app.register_blueprint(admin_bp, url_prefix='/admin')
         db.create_all()
 
     return app
