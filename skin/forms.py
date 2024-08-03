@@ -1,6 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField,FileField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from wtforms import StringField, SubmitField, PasswordField
+from wtforms.validators import DataRequired, Length, Email, ValidationError,EqualTo
+from flask_login import current_user
+
 from .models import User
 
 class RegisterForm(FlaskForm):
@@ -26,7 +28,18 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Sign in')
 
 class UpdateProfileForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=30)])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    profile_image = FileField('Profile Image')
-    submit = SubmitField('Update')
+    username = StringField(label='User Name', validators=[Length(min=2, max=30), DataRequired()])
+    email = StringField(label='E-mail', validators=[Email(), DataRequired()])
+    submit = SubmitField(label='Update Profile')
+
+    def validate_username(self, username_to_check):
+        if username_to_check.data != current_user.username:
+            user = User.query.filter_by(username=username_to_check.data).first()
+            if user:
+                raise ValidationError('Username already exists! Please try a different username')
+
+    def validate_email(self, email_to_check):
+        if email_to_check.data != current_user.email:
+            email = User.query.filter_by(email=email_to_check.data).first()
+            if email:
+                raise ValidationError('Email Address already exists! Please try a different email address')

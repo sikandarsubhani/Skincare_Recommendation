@@ -1,0 +1,25 @@
+<header id="header" class="d-flex align-items-center">
+  <div class="container d-flex justify-content-between">
+
+    <div class="logo">
+      <h1 class="text-light"><a href="{{ url_for('main_bp.first')}}">Skin Care Recommendation</a></h1>
+      
+    </div>
+
+    <nav id="navbar" class="navbar">
+      <ul>
+        <li><a class="nav-link {% if request.endpoint == 'main_bp.first' %}active{% endif %}" href="{{ url_for('main_bp.first')}}">Home</a></li>
+        {% if current_user.is_authenticated %}
+        <li><a class="nav-link {% if request.endpoint == 'main_bp.index' %}active{% endif %}" href="{{ url_for('main_bp.index')}}">Preview</a></li>
+        <li><a class="nav-link {% if request.endpoint == 'main_bp.dashboard' %}active{% endif %}" href="{{ url_for('main_bp.dashboard')}}">Dashboard</a></li>
+        <li><a class="nav-link" href="{{ url_for('main_bp.logout')}}">Logout</a></li>
+        {% else %}
+        <li><a class="nav-link {% if request.endpoint == 'main_bp.login' %}active{% endif %}" href="{{ url_for('main_bp.login')}}">Login</a></li>
+        <li><a class="nav-link {% if request.endpoint == 'main_bp.register' %}active{% endif %}" href="{{ url_for('main_bp.register')}}">Signup</a></li>
+        {% endif %}
+      </ul>
+      <i class="bi bi-list mobile-nav-toggle"></i>
+    </nav><!-- .navbar -->
+
+  </div>
+</header><!-- End Header -->

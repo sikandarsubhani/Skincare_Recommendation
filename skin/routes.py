@@ -161,6 +161,14 @@ def chart():
 @login_required
 def dashboard():
     user = current_user
+    form = UpdateProfileForm(obj=user)
+    if form.validate_on_submit():
+        user.username = form.username.data
+        user.email = form.email.data
+        db.session.commit()
+        flash('Profile updated successfully!', category='success')
+        return redirect(url_for('main_bp.dashboard'))
+    
     if request.method == 'POST' and 'my_image' in request.files:
         img = request.files['my_image']
         if img:
@@ -175,4 +183,4 @@ def dashboard():
             flash('Picture uploaded successfully!', category='success')
 
     pictures = Picture.query.filter_by(user_id=user.id).all()
-    return render_template('dashboard.html', user=user, pictures=pictures)
+    return render_template('dashboard.html', user=user, pictures=pictures,form=form)
