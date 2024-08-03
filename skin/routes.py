@@ -1,15 +1,22 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from . import db, bcrypt
-from .forms import RegisterForm, LoginForm
-from .models import User
-from flask_login import login_user, logout_user, login_required, current_user
+from .forms import RegisterForm, LoginForm,UpdateProfileForm
+from .models import User,Picture
+from flask_login import login_user, logout_user, login_required, current_user,login_manager
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.metrics import AUC
 import numpy as np
+import os
+from werkzeug.utils import secure_filename  # Correct import
 
 main_bp = Blueprint('main_bp', __name__)
+
+
+UPLOAD_FOLDER = 'skin/static/uploads/'
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
 dependencies = {'auc_roc': AUC}
 verbose_name = {
@@ -81,15 +88,32 @@ def logout():
 @main_bp.route("/index", methods=['GET', 'POST'])
 @login_required
 def index():
+    if not current_user.is_authenticated:
+        return redirect(url_for('main_bp.login'))
     return render_template("index.html")
 
-@main_bp.route("/submit", methods=['GET', 'POST'])
+@main_bp.route("/submit", methods=['POST'])
 @login_required
-def get_output():
-    if request.method == 'POST':
-        img = request.files['my_image']
-        img_path = "static/tests/" + img.filename
-        img.save(img_path)
+def submit():
+    if 'my_image' not in request.files:
+        flash('No file part', category='danger')
+        return redirect(request.url)
+
+    file = request.files['my_image']
+
+    if file.filename == '':
+        flash('No selected file', category='danger')
+        return redirect(request.url)
+
+    if file:
+        filename = secure_filename(file.filename)
+        img_path = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(img_path)
+
+        # Save the picture in the database
+        picture = Picture(filename=filename, user_id=current_user.id)
+        db.session.add(picture)
+        db.session.commit()
 
         predict_result = predict_label(img_path)
         recommendation_is = "Cannot recommend"
@@ -121,7 +145,9 @@ def get_output():
         elif "STDs" in predict_result:
             recommendation_is = "Antiviral medication"
 
-    return render_template("prediction.html", prediction=predict_result, img_path=img_path, recommendation_result=recommendation_is)
+        return render_template('prediction.html', prediction=predict_result, img_path=img_path, recommendation_result=recommendation_is)
+
+    return redirect(url_for('main_bp.dashboard'))
 
 @main_bp.route("/Graph")
 def Graph():
@@ -130,3 +156,23 @@ def Graph():
 @main_bp.route("/chart")
 def chart():
     return render_template('chart.html')
+
+@main_bp.route("/dashboard", methods=['GET', 'POST'])
+@login_required
+def dashboard():
+    user = current_user
+    if request.method == 'POST' and 'my_image' in request.files:
+        img = request.files['my_image']
+        if img:
+            filename = secure_filename(img.filename)
+            img_path = os.path.join(UPLOAD_FOLDER, filename)
+            img.save(img_path)
+
+            picture = Picture(filename=filename, user_id=user.id)
+            db.session.add(picture)
+            db.session.commit()
+
+            flash('Picture uploaded successfully!', category='success')
+
+    pictures = Picture.query.filter_by(user_id=user.id).all()
+    return render_template('dashboard.html', user=user, pictures=pictures)
